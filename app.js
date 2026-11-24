@@ -1176,7 +1176,7 @@ function viewConfirm(id) {
   const o = state.orders.find(x => x.id === id);
   if (!o) { viewNotFound(); return; }
   const waText = t("order_whatsapp_intro") + "\n\n" +
-    o.lines.map(l => "• " + l.name + " (" + l.size + " / " + l.color + ") ×" + l.qty + " — " + l.price * l.qty + " EGP").join("\n") +
+    (o.lines || []).map(l => "• " + l.name + " (" + l.size + " / " + l.color + ") ×" + l.qty + " — " + l.price * l.qty + " EGP").join("\n") +
     "\n\n" + t("order_num") + ": " + o.id + "\n" + t("order_total") + ": " + o.total + " EGP" +
     "\n" + o.name + " — " + o.phone + "\n" + o.gov + " — " + o.address;
   document.getElementById("view").innerHTML =
@@ -1187,7 +1187,7 @@ function viewConfirm(id) {
       '<div class="order-num">' + t("order_num") + ": " + esc(o.id) + "</div>" +
       "<p style='color:var(--muted);max-width:440px;margin:0 auto 28px'>" + t("order_ok_d") + "</p>" +
       '<div class="summary-card" style="text-align:start;max-width:440px;margin:0 auto 28px">' +
-        o.lines.map(l => '<div class="sum-row"><span>' + esc(l.name) + " ×" + l.qty + "</span><span>" + fmt(l.price * l.qty) + "</span></div>").join("") +
+        (o.lines || []).map(l => '<div class="sum-row"><span>' + esc(l.name) + " ×" + l.qty + "</span><span>" + fmt(l.price * l.qty) + "</span></div>").join("") +
         (o.discount ? '<div class="sum-row"><span>' + t("discount") + '</span><span class="disc">−' + fmt(o.discount) + "</span></div>" : "") +
         '<div class="sum-row"><span>' + t("shipping") + "</span><span>" + (o.shipping ? fmt(o.shipping) : t("free")) + "</span></div>" +
         '<div class="sum-row total"><span>' + t("total") + "</span><span>" + fmt(o.total) + "</span></div>" +
@@ -1499,7 +1499,7 @@ function viewAdmin() {
       ? '<div class="table-wrap"><table class="admin-table"><thead><tr><th>' + t("order_num") + "</th><th>" + t("customer") + "</th><th>" + t("items") + "</th><th>" + t("total") + "</th><th>" + t("date") + "</th><th>" + t("status") + "</th></tr></thead><tbody>" +
         state.orders.map(o =>
           "<tr><td><b>" + esc(o.id) + "</b></td><td>" + esc(o.name) + "<br><span style='font-size:.76rem;color:var(--muted)' dir='ltr'>" + esc(o.phone) + "</span></td>" +
-          "<td>" + o.lines.reduce((s, l) => s + l.qty, 0) + "</td><td>" + fmt(o.total) + "</td>" +
+          "<td>" + (o.lines || []).reduce((s, l) => s + l.qty, 0) + "</td><td>" + fmt(o.total) + "</td>" +
           "<td style='font-size:.8rem'>" + new Date(o.at).toLocaleDateString(state.lang === "ar" ? "ar-EG" : "en-GB") + "</td>" +
           "<td><span class='badge new'>" + t("status_new") + "</span></td></tr>").join("") +
         "</tbody></table></div>"
